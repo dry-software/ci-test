@@ -1,0 +1,36 @@
+name: Run CI
+on:
+  - push
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-24.04, macos-14, windows-2022 ]
+        node: [ 22 ]
+    runs-on: ${{matrix.os}}
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - name: Set up node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{matrix.node}}
+          registry-url: 'https://pkg.nutjs.dev'
+      - name: Who am I?
+        run: |
+          npm whoami
+      - name: Install
+        run: |
+          npm i
+      - name: Run
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: npm t
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-screenshot.png
+          path: screenshot.png
