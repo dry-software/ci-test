@@ -17,8 +17,8 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v5
         with:
+          registry-url: 'https://registry.npmjs.org'
           node-version: ${{matrix.node}}
-          registry-url: 'https://pkg.nutjs.dev'
       - name: Who am I?
         run: |
           npm whoami
